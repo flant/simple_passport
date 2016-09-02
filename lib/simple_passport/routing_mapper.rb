@@ -2,7 +2,7 @@ module SimplePassport
   module RoutingMapper
 
     def passport_authorization(path, params={})
-      get path, params
+      post path, params
     end
 
   end
