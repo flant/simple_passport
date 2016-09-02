@@ -1,3 +1,5 @@
+require_relative 'authorization_error'
+
 module SimplePassport; end
 module SimplePassport::Settings
   mattr_accessor :passport_lifetime, :salt_length
@@ -10,6 +12,8 @@ module SimplePassport::Settings
   @@salt_length = get_setting(:salt_length, 16)
 
   def self.secret_key
-    get_setting(:secret_key)
+    key = get_setting(:secret_key)
+    raise SimplePassport::AuthorizationError.new("Can't use SimplePassport with blank key!") if key.blank?
+    key
   end
 end

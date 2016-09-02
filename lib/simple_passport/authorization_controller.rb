@@ -10,7 +10,7 @@ module SimplePassport::AuthorizationController
     before_action :validate_passport
 
     rescue_from SimplePassport::AuthorizationError do |exc|
-      render plain: {error: exc.message}.to_json, content_type: 'application/json', status: 401
+      render plain: {error: 'Authorization failed'}.to_json, content_type: 'application/json', status: 401
     end
   end
 
