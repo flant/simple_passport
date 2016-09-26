@@ -8,8 +8,8 @@ module SimplePassport::Settings
     ENV.fetch("simple_passport_#{key}".upcase) { default }
   end
 
-  @@passport_lifetime = get_setting(:passport_lifetime, 30.seconds)
-  @@salt_length = get_setting(:salt_length, 16)
+  @@passport_lifetime = get_setting(:passport_lifetime, 30).to_i.seconds
+  @@salt_length = get_setting(:salt_length, 16).to_i
 
   def self.secret_key
     key = get_setting(:secret_key)
