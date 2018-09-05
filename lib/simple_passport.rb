@@ -1,4 +1,3 @@
-require 'rails'
 require 'action_controller/railtie'
 require 'rails/engine'
 
