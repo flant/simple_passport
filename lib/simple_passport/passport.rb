@@ -3,8 +3,8 @@ require_relative 'settings'
 module SimplePassport; end
 class SimplePassport::Passport < Struct.new(:user_key, :time, :salt, :signature)
   class << self
-    def build_signature(user_key, time, salt)
-      Digest::SHA512.hexdigest("#{SimplePassport::Settings.secret_key}#{user_key}#{time}#{salt}")
+    def build_signature(user_key, time, salt, secret_key_name = nil)
+      Digest::SHA512.hexdigest("#{SimplePassport::Settings.secret_key(secret_key_name)}#{user_key}#{time}#{salt}")
     end
 
     def issue_for(user_key)
@@ -33,10 +33,10 @@ class SimplePassport::Passport < Struct.new(:user_key, :time, :salt, :signature)
     Base64.encode64(to_hash.to_json).gsub(/\n/, '')
   end
 
-  def valid?
+  def valid?(secret_key_name = nil)
     time.is_a?(Integer) &&
     (Time.now.to_i - time <= SimplePassport::Settings.passport_lifetime) &&
-    signature == self.class.build_signature(user_key, time, salt)
+    signature == self.class.build_signature(user_key, time, salt, secret_key_name)
   end
 
   def to_hash

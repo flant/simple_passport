@@ -17,21 +17,20 @@ module SimplePassport::AuthorizationController
   protected
 
   def validate_passport
-    unless params[:passport] && (@current_user_passport = SimplePassport::read_from(params[:passport])) && current_user_passport.valid?
-      raise SimplePassport::AuthorizationError.new('Invalid Passport')
-    end
+    return true if params[:passport] &&
+                     (@current_user_passport = SimplePassport::read_from(params[:passport])) &&
+                     current_user_passport.valid?(simple_passport_secret_key_name)
+    raise SimplePassport::AuthorizationError.new('Invalid Passport')
   end
 end
 
 if defined? ActionController::Base
-  ActionController::Base.class_eval do
-    def self.passport_authorization_controller
-      include SimplePassport::AuthorizationController
-    end
-  end
-
   ActionController::API.class_eval do
-    def self.passport_authorization_controller
+    def self.passport_authorization_controller(kwargs = {})
+      define_method :simple_passport_secret_key_name do
+        kwargs[:key]
+      end
+
       include SimplePassport::AuthorizationController
     end
   end
