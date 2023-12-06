@@ -1,26 +1,34 @@
+# frozen_string_literal: true
+
 require_relative 'authorization_error'
 require_relative 'passport'
 
 module SimplePassport; end
-module SimplePassport::AuthorizationController
-  extend ActiveSupport::Concern
 
-  included do
-    attr_reader :current_user_passport
-    before_action :validate_passport
+module SimplePassport
+  module AuthorizationController
+    extend ActiveSupport::Concern
 
-    rescue_from SimplePassport::AuthorizationError do |exc|
-      render plain: {error: 'Authorization failed'}.to_json, content_type: 'application/json', status: 401
+    included do
+      attr_reader :current_user_passport
+
+      before_action :validate_passport
+
+      rescue_from SimplePassport::AuthorizationError do |_exc|
+        render plain: { error: 'Authorization failed' }.to_json, content_type: 'application/json', status: 401
+      end
     end
-  end
 
-  protected
+    protected
 
-  def validate_passport
-    return true if params[:passport] &&
-                     (@current_user_passport = SimplePassport::read_from(params[:passport])) &&
+    def validate_passport
+      binding.pry
+      return true if params[:passport] &&
+                     (@current_user_passport = SimplePassport.read_from(params[:passport])) &&
                      current_user_passport.valid?(simple_passport_secret_key_name)
-    raise SimplePassport::AuthorizationError.new('Invalid Passport')
+
+      raise SimplePassport::AuthorizationError, 'Invalid Passport'
+    end
   end
 end
 

@@ -1,10 +1,10 @@
+# frozen_string_literal: true
+
 module SimplePassport
   module RoutingMapper
-
-    def passport_authorization(path, params={})
+    def passport_authorization(path, params = {})
       post path, params
     end
-
   end
 end
 
