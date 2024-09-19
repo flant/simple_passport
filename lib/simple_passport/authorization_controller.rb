@@ -22,7 +22,6 @@ module SimplePassport
     protected
 
     def validate_passport
-      binding.pry
       return true if params[:passport] &&
                      (@current_user_passport = SimplePassport.read_from(params[:passport])) &&
                      current_user_passport.valid?(simple_passport_secret_key_name)
