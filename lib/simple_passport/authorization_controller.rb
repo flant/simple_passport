@@ -15,14 +15,13 @@ module SimplePassport
       before_action :validate_passport
 
       rescue_from SimplePassport::AuthorizationError do |_exc|
-        render plain: { error: 'Authorization failed' }.to_json, content_type: 'application/json', status: 401
+        render json: { error: 'Authorization failed' }, status: :unauthorized
       end
     end
 
     protected
 
     def validate_passport
-      binding.pry
       return true if params[:passport] &&
                      (@current_user_passport = SimplePassport.read_from(params[:passport])) &&
                      current_user_passport.valid?(simple_passport_secret_key_name)
